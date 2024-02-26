@@ -12,35 +12,22 @@ Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The appli
 
 ## Setting up Open-Telemetry Instrumentation
 
-Install `@jufab/opentelemetry-angular-interceptor` which will help us configure the open telemetry SDK. (https://github.com/jufab/opentelemetry-angular-interceptor)
+Create an instrument.ts file in the repository
 
-The interceptor helps us intercept all the HTTP calls from the system using `HttpClient` from Angular
+For setting up traces for the application we need the following things :-
 
-To configure the tracer
+1. Trace Provider (this takes care of giving us the tracer factory through which we can generate traces either auto or manual)
 
-````imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    OpenTelemetryInterceptorModule.forRoot({
-      commonConfig: {
-      console: true,
-      production: false,
-      logBody: true,
-      serviceName: 'signoz-angular-app',
-      probabilitySampler: '0.7',
-    },
-    otelcolConfig: {
-      url: 'http://127.0.0.1:4318/v1/traces', //URL of opentelemetry collector
-    }
-    }),
-    OtelColExporterModule,
-    CompositePropagatorModule,
-  ]```
+2. Trace Exporter (this takes care of exporting the generated data to the destination end points)
 
+3. Auto / Manual Instrumentations to generate OTEL data (actual generation of otel data)
 
-Why the interceptor ?
+4. Propagators to propagate `traceContext` to the down-stream services if any
 
-This helps us avoid the task of manually setting up the Trace Provider / Samplers / Propagators / Trace Exporters
+In the application we are using :-
 
-````
+1. WebTracerProvider as the `TraceProvider`
+
+2. `ConsoleSpanExporter` (easy debugging in dev mode) & `OTLPTraceExporter` (used in prod envs to export data) as the exporters
+
+3. `getWebAutoInstrumentations` to generate auto instrumentations out of the box
