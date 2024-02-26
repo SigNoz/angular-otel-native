@@ -27,9 +27,11 @@
     "@opentelemetry/instrumentation-document-load": "^0.35.0",
     "@opentelemetry/instrumentation-user-interaction": "^0.35.0",
     "@opentelemetry/propagator-b3": "^1.21.0",
+    "@opentelemetry/resources": "^1.21.0",
     "@opentelemetry/sdk-node": "^0.48.0",
     "@opentelemetry/sdk-trace-node": "^1.21.0",
     "@opentelemetry/sdk-trace-web": "^1.21.0",
+    "@opentelemetry/semantic-conventions": "^1.21.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
