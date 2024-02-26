@@ -1,27 +1,46 @@
-# MyApp
+# SignozAngularSample
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.1.2.
+
+The angular 17 by default installs `Standalone` component.
+
+`ng new signoz-angular-sample`
 
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Setting up Open-Telemetry Instrumentation
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Install `@jufab/opentelemetry-angular-interceptor` which will help us configure the open telemetry SDK. (https://github.com/jufab/opentelemetry-angular-interceptor)
 
-## Build
+The interceptor helps us intercept all the HTTP calls from the system using `HttpClient` from Angular
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+To configure the tracer
 
-## Running unit tests
+````imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    OpenTelemetryInterceptorModule.forRoot({
+      commonConfig: {
+      console: true,
+      production: false,
+      logBody: true,
+      serviceName: 'signoz-angular-app',
+      probabilitySampler: '0.7',
+    },
+    otelcolConfig: {
+      url: 'http://127.0.0.1:4318/v1/traces', //URL of opentelemetry collector
+    }
+    }),
+    OtelColExporterModule,
+    CompositePropagatorModule,
+  ]```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+Why the interceptor ?
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+This helps us avoid the task of manually setting up the Trace Provider / Samplers / Propagators / Trace Exporters
 
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+````
