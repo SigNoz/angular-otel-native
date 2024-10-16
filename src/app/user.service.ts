@@ -1,4 +1,4 @@
-import { trace } from '@opentelemetry/api';
+import { trace, metrics } from '@opentelemetry/api';
 import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 export class UsersService {
   constructor(private http: HttpClient) {}
   tracer = trace.getTracer('user service');
+  meter = metrics.getMeter('user.service');
   getReqBody() {
     return {
       randomNumber: Math.round(Math.random() * 1000),
@@ -26,6 +27,12 @@ export class UsersService {
         window.navigator.userAgent
       );
       span.end();
+
+      const getRequestCountMetrics = this.meter.createCounter(
+        'user.service.get.button.clicks'
+      );
+      getRequestCountMetrics.add(1);
+
       return this.http.get(url);
     });
   }
