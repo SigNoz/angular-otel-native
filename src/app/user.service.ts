@@ -1,3 +1,5 @@
+import { trace } from '@opentelemetry/api';
+import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
@@ -6,14 +8,26 @@ import { HttpClient } from '@angular/common/http';
 })
 export class UsersService {
   constructor(private http: HttpClient) {}
-
+  tracer = trace.getTracer('user service');
   getReqBody() {
     return {
       randomNumber: Math.round(Math.random() * 1000),
     };
   }
   apiGet(url: string) {
-    return this.http.get(url);
+    // make sure to check the tracer here is not a noop tracer
+    // check the required attributes being present in the console when using a console exporter.
+    // make sure to end the span as well!
+    return this.tracer.startActiveSpan('get user', (span) => {
+      span.setAttribute(SemanticAttributes.CODE_LINENO, 19);
+      span.setAttribute(SemanticAttributes.HTTP_METHOD, 'GET');
+      span.setAttribute(
+        SemanticAttributes.HTTP_USER_AGENT,
+        window.navigator.userAgent
+      );
+      span.end();
+      return this.http.get(url);
+    });
   }
   apiPost(url: string) {
     return this.http.post(url, this.getReqBody());
