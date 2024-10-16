@@ -25,9 +25,9 @@ provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
 provider.addSpanProcessor(
   new BatchSpanProcessor(
     new OTLPTraceExporter({
-      url: 'yourURL',
+      url: 'https://ingest.us.signoz.cloud:443/v1/traces',
       headers: {
-        'signoz-access-token': 'INGESTION_KEY',
+        'signoz-access-token': 'XXX',
       },
     })
   )
@@ -40,12 +40,18 @@ provider.register({
 registerInstrumentations({
   instrumentations: [
     getWebAutoInstrumentations({
-      '@opentelemetry/instrumentation-document-load': {},
-      '@opentelemetry/instrumentation-user-interaction': {},
+      '@opentelemetry/instrumentation-document-load': {
+        enabled: false,
+      },
+      '@opentelemetry/instrumentation-user-interaction': {
+        enabled: false,
+      },
       '@opentelemetry/instrumentation-fetch': {
         propagateTraceHeaderCorsUrls: /.+/,
+        enabled: false,
       },
       '@opentelemetry/instrumentation-xml-http-request': {
+        enabled: false,
         propagateTraceHeaderCorsUrls: /.+/,
       },
     }),
