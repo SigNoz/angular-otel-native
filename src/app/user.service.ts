@@ -28,6 +28,7 @@ export class UsersService {
       );
       span.end();
 
+      // this is to collect count metrics here
       const getRequestCountMetrics = this.meter.createCounter(
         'user.service.get.button.clicks'
       );
